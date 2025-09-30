@@ -1,0 +1,26 @@
+cat > .gitignore <<'EOF'
+# Logs
+*.log
+/var/log/
+
+# OS / editors
+*.swp
+*.tmp
+.vscode/
+.DS_Store
+
+# Keys & secrets (NE PAS pousser)
+*.pem
+*.key
+*.ppk
+*.json    # attention si JSON d'authentification Azure
+secrets.env
+.env
+
+# Binaries
+node_modules/
+dist/
+
+# GitHub Actions artifacts
+*.cache
+EOF
