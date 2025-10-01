@@ -17,3 +17,5 @@ Ce projet déploie :
 5. Vérifier dans le portail Azure que les métriques montent et configurer une alerte CPU > 80%
 6. Nettoyer avec `cleanup.sh`
 ```
+
+# Test github actions
