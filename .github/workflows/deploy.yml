@@ -1,0 +1,33 @@
+name: Deploy Azure Infra
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupérer le code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Connexion à Azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 3. Vérifier la syntaxe Bicep
+      - name: Validate Bicep
+        run: az bicep build --file bicep/main.bicep
+
+      # 4. Déployer l'infra (idempotent : met à jour si déjà existante)
+      - name: Deploy Infra
+        run: |
+          az group create --name rg-monitor --location westeurope
+          az deployment group create \
+            --resource-group rg-monitor \
+            --template-file bicep/main.bicep
