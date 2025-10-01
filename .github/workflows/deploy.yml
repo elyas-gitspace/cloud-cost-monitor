@@ -31,3 +31,4 @@ jobs:
           az deployment group create \
             --resource-group rg-monitor \
             --template-file bicep/main.bicep
+            --parameters sshPublicKey="${{ secrets.SSH_PUBLIC_KEY }}"
