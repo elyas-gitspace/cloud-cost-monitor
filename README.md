@@ -32,6 +32,15 @@ Ce projet à pour but de déployer une infrastructure basé sur une VM linux, et
             */5 * * * * /usr/local/bin/custom_monitor.sh
 
 
-    J'ai ensuite mis en place une règle Azure Monitor Alert, qui envoi un mail dés lors qu'un log contenant la mention '[CUSTOM_ALERT]' apparaît dans le Log Analytics Workspace  
+    J'ai ensuite mis en place une règle Azure Monitor Alert, qui envoi un mail dés lors qu'un log contenant la mention '[CUSTOM_ALERT]' apparaît dans le Log Analytics Workspace,
+    par le biais de la requête KQL suivante : 
+
+            Syslog 
+            | where Computer == "elyassvm"                                # elyassvm étant le nom de ma VM
+            | where SyslogMessage contains "[CUSTOM_ALERT]"               # je séléctionne seulement les logs contenant [CUSTOM_ALERT]
     
 
+## Exemple d’alerte reçue
+Voici un exemple d’alerte envoyée par mail lorsque la charge CPU dépasse le seuil défini :
+
+![Alerte Email](docs/mail_alert.png)
