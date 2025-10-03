@@ -40,7 +40,7 @@ Ce projet à pour but de déployer une infrastructure basé sur une VM linux, et
             | where SyslogMessage contains "[CUSTOM_ALERT]"               # je séléctionne seulement les logs contenant [CUSTOM_ALERT]
     
 
-## Exemple d’alerte reçue
+# Exemple d’alerte reçue
 Voici un exemple d’alerte envoyée par mail lorsque la charge CPU dépasse le seuil défini :
 
 ![Alerte Email](docs/mail_alert.png)
