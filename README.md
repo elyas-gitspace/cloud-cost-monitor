@@ -42,4 +42,4 @@ Ce projet à pour but de déployer une infrastructure basé sur une VM linux, et
 # Exemple d’alerte reçue
 Voici un exemple d’alerte envoyée par mail lorsque la charge CPU dépasse le seuil défini :
 
-![Alerte Email](docs/mail_alert.png)
+<img width="1672" height="802" alt="mail_alert" src="https://github.com/user-attachments/assets/18fde98c-a562-42bb-b0b1-f068a633fddc" />
