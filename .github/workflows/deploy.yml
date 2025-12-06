@@ -25,10 +25,14 @@ jobs:
         run: az bicep build --file bicep/main.bicep
 
       # 4. Déployer l'infra (idempotent : met à jour si déjà existante)
-      - name: Deploy Infra
+      - name: Generate SSH Key
         run: |
-          az group create --name rg-monitor --location westeurope
+          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+          cat ~/.ssh/id_rsa.pub
+
+      - name: Deploy Bicep
+        run: |
           az deployment group create \
-            --resource-group rg-monitor \
-            --template-file bicep/main.bicep
-            --parameters sshPublicKey="${{ secrets.SSH_PUBLIC_KEY }}"
+          --resource-group rg-monitor \
+          --template-file bicep/main.bicep \
+          --parameters sshPublicKey="$(cat ~/.ssh/id_rsa.pub)"
