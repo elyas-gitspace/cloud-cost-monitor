@@ -1,38 +1,41 @@
-name: Deploy Azure Infra
+name: Deploy Azure Monitoring Infrastructure
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-      # 1. Récupérer le code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # 2. Connexion à Azure
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # 3. Vérifier la syntaxe Bicep
-      - name: Validate Bicep
-        run: az bicep build --file bicep/main.bicep
-
-      # 4. Déployer l'infra (idempotent : met à jour si déjà existante)
-      - name: Generate SSH Key
-        run: |
-          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
-          cat ~/.ssh/id_rsa.pub
-
-      - name: Deploy Bicep
-        run: |
-          az deployment group create \
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Build Bicep
+      run: |
+        az bicep build --file bicep/main.bicep
+        
+    - name: Create Resource Group
+      run: |
+        az group create --name rg-monitor --location westeurope
+        
+    - name: Generate SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -q
+        echo "SSH Public Key generated"
+        
+    - name: Deploy Bicep Template
+      run: |
+        az deployment group create \
           --resource-group rg-monitor \
           --template-file bicep/main.bicep \
-          --parameters sshPublicKey="$(cat ~/.ssh/id_rsa.pub)"
+          --parameters sshPublicKey="$(cat ~/.ssh/id_rsa.pub)" \
+          --parameters adminUsername="azureuser"
