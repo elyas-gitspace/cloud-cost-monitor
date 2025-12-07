@@ -1,45 +1,44 @@
-# File: README.md
-```markdown
-# Projet Azure Cloud Monitoring
+**Azure Cloud Monitoring Infrastructure**
 
+                            **Présentation**
 
-Ce projet à pour but de déployer une infrastructure basé sur une VM linux, et d'assurer le monitoring/surveillance automatique (via un cron bash sur un script) en envoyant des alertes automatiques par mail lorsque des métriques semblent anormales (selon des critères que j'ai prédéfini) --
+Ce projet met en place une infrastructure de monitoring complète sur Azure, incluant :
 
-    Le fichier bicep (agissant comme Terraform) va déployer automatiquement, en se basant sur le fichier depploy.sh :
-        - Une VM Ubuntu Linux (Standard_B1s)
-        - Un Log Analytics Workspace (pour recevoir les logs)
-    
-    J'ai ensuite installé un AMA (Azure monitor agent) et mis en place une po^litique DCR (Data colletion rules) :
-        - L'AMA est agent installé sur la VM linux qui va récolter les logs (echo, ...) et métriques (CPU, RAM,...) de la VM en suivant justement une politique de récolte DCR
-            (dans mon script bash custom_monitor.sh , les alertes sont précédées de 'logger', elles sont donc stockées dans /var/log/syslog. C'est tout logiquement que j'ai configuré
-            une DCR ne lisant que /var/log/syslog)
+- Bicep pour créer l'infrastructure Azure
+- Une VM Ubuntu avec Azure Monitor Agent (AMA)
+- Un Log Analytics Workspace pour centraliser les logs et métriques
+- Un système d'alertes custom basé sur un script Bash
+- GitHub Actions pour un déploiement automatique (CI/CD)
 
-    Afin d'établir un monitoring pertinent et efficace, j'ai écrit un script bash déclenchant un logger contenant la mention '[CUSTOM_ALERT]' lorsque une ressource (ram, CPU, disk)
-    dépasse un certain seuil
+                        **Architecture de monitoring**
 
-        - exemples tirés du script : 
+Le système de monitoring inclut :
 
-                CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}') 
-                CPU=$(printf "%.2f" "$CPU")                                                                 
+- **Azure Monitor Agent (AMA)** : collecte les logs et métriques de la VM
+- **Data Collection Rules (DCR)** : filtre et dirige les logs spécifiques vers Log Analytics
+- **Script de monitoring custom** : surveille CPU, RAM et disque en temps réel
+- **Azure Monitor Alert Rules** : détecte et notifie les anomalies via email
+- **Cron** : exécute le monitoring toutes les 5 minutes
 
-                if (( $(echo "$CPU > 80" | bc -l) )); 
-                then logger "[CUSTOM_ALERT] CPU HIGH: ${CPU}%" 
-                fi
+                        **Structure du projet**
 
-    A noter que j'ai également mis en place un cron sur ce script afin qu'il soit éxécuté toutes les 5 minutes :
+```
+azure-monitoring-project/
+│
+├── .github/
+│ └── workflows/
+│ └── deploy.yml
+│
+├── bicep/
+│ └── main.bicep
+│
+├── scripts/
+│ ├── deploy.sh
+│ └── custom_monitor.sh
+│
+├── docs/
+│ └── mail_alert.png
+│
+└── README.md
+```
 
-            sudo crontab -e
-            */5 * * * * /usr/local/bin/custom_monitor.sh
-
-
-    J'ai ensuite mis en place une règle Azure Monitor Alert, qui envoi un mail dés lors qu'un log contenant la mention '[CUSTOM_ALERT]' apparaît dans le Log Analytics Workspace,
-    par le biais de la requête KQL suivante : 
-
-            Syslog 
-            | where Computer == "elyassvm"                                # elyassvm étant le nom de ma VM
-            | where SyslogMessage contains "[CUSTOM_ALERT]"               # je séléctionne seulement les logs contenant [CUSTOM_ALERT]
-    
-# Exemple d’alerte reçue
-Voici un exemple d’alerte envoyée par mail lorsque la charge CPU dépasse le seuil défini :
-
-![Alerte Email](docs/mail_alert.png)
