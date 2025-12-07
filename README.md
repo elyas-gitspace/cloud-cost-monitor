@@ -111,5 +111,3 @@ ssh elyas@<VM_IP>
 sudo cp scripts/custom_monitor.sh /usr/local/bin/
 sudo chmod +x /usr/local/bin/custom_monitor.sh
 sudo crontab -e
-# Ajouter : */5 * * * * /usr/local/bin/custom_monitor.sh
-Installer Azure Monitor Agent (manuellement sur la VM)
