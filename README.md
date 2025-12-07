@@ -69,14 +69,15 @@ Configuration automatique
 - **AMA + DCR** : Collecte automatiquement les logs syslog
 - **Azure Monitor Alert** : Détecte les logs `[CUSTOM_ALERT]` et envoie des emails
 
-Requête KQL pour les alertes
+                    **Requête KQL pour les alertes**
 
 ```kql
 Syslog 
 | where Computer == "elyassvm"
 | where SyslogMessage contains "[CUSTOM_ALERT]"
 
-                        **Déploiement avec GitHub Actions**
+                    
+                    **Déploiement avec GitHub Actions**
 
 Workflow : .github/workflows/deploy.yml
 
@@ -92,7 +93,8 @@ Il effectue :
 
 - Configuration des paramètres de déploiement
 
-Pour déployer manuellement
+                    **Pour déployer manuellement**
+                    
 Configurer les credentials Azure :
 
 bash
