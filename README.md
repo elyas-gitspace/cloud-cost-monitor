@@ -71,7 +71,6 @@ Configuration automatique
 
                     **Requête KQL pour les alertes**
 
-```kql
 Syslog 
 | where Computer == "elyassvm"
 | where SyslogMessage contains "[CUSTOM_ALERT]"
@@ -94,7 +93,7 @@ Il effectue :
 - Configuration des paramètres de déploiement
 
                     **Pour déployer manuellement**
-                    
+
 Configurer les credentials Azure :
 
 bash
